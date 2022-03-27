@@ -5,6 +5,7 @@ use isahc::{AsyncReadResponseExt, Error, HttpClient, Response};
 use std::time::Duration;
 
 use serde_json::json;
+use serde_urlencoded::{Deserializer, Serializer};
 use time::UtcOffset;
 
 pub struct Runner {
@@ -19,27 +20,26 @@ impl Runner {
     }
     pub async fn screen(&self) -> anyhow::Result<()> {
         for i in self.users.clone() {
-            let json = json!({
-                "Type": "G",
-                "IsOther": "False",
-                "IsStudent": "1",
-                "FirstName": i.first_name,
-                "LastName": i.last_name,
-                "Email": i.email,
-                "State": "NY",
-                "Location": i.school_code,
-                "Floor": "",
-                "Answer1": "0",
-                "Answer2": "0",
-                "Answer3": "3",
-                "ConsentType": "",
-            });
+            let pairs = vec![
+                ("Type", "G"),
+                ("IsOther", "False"),
+                ("IsStudent", "1"),
+                ("FirstName", &i.first_name),
+                ("LastName", &i.last_name),
+                ("Email", &i.email),
+                ("State", "NY"),
+                ("Location", &i.school_code),
+                ("Floor", ""),
+                ("Answer1", "0"),
+                ("Answer2", "0"),
+                ("Answer3", "3"),
+                ("ConsentType", ""),
+            ];
+            let ser = serde_urlencoded::to_string(pairs)?;
+            log::debug!("Ser: {}", ser);
             match self
                 .client
-                .post_async(
-                    "https://healthscreening.schools.nyc/home/submit",
-                    json.as_str(),
-                )
+                .post_async("https://healthscreening.schools.nyc/home/submit", ser)
                 .await
             {
                 Ok(mut r) => {
