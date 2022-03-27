@@ -60,7 +60,9 @@ impl Runner {
                 == 6
             {
                 self.screen().await.unwrap();
+                tokio::time::sleep(Duration::from_secs(86400)).await;
             }
+            // in case my genius code decides to break itself, would rather not have it run on every cycle
             tokio::time::sleep(Duration::new(10, 0)).await;
         }
     }
