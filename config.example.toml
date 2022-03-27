@@ -1,0 +1,16 @@
+[database]
+url = "postgres://<username>:[password]@<domain/ip>/<database>"
+# Do not change this, it will automatically change once you start the bot
+first_start = true
+[bot]
+# Replace with your bot's token
+token = "<token>"
+# needed for slash commands
+# note: you must use slash commands if this instance has >75 users
+application_id = 123
+[owner]
+# send logs of edited screenings, new screenings, etc
+# to disable logging, leave this list empty
+logs = ["[<server-id>:<channel-id>]"]
+# discord ids of ppl classified as `owner`, can run /forcescreen, and other owner-only commands
+ids = [11234, 12314]
